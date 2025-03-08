@@ -43,27 +43,6 @@ def detect_system_theme():
     except Exception:
         return "flatly"
 
-    if theme == "darkly":
-        style.configure("Custom.TFrame",
-                       background="#2b2b2b",
-                       bordercolor="#3a3a3a")
-        style.configure("Custom.TButton",
-                       background="#3a3a3a",
-                       foreground="#ffffff")
-        style.configure("Custom.TEntry",
-                       fieldbackground="#2b2b2b",
-                       foreground="#ffffff")
-    else:
-        style.configure("Custom.TFrame",
-                       background="#ffffff",
-                       bordercolor="#e0e0e0")
-        style.configure("Custom.TButton",
-                       background="#f0f0f0",
-                       foreground="#000000")
-        style.configure("Custom.TEntry",
-                       fieldbackground="#ffffff",
-                       foreground="#000000")
-
 class PasswordManager:
     def __init__(self, root):
         self.root = root
@@ -97,53 +76,6 @@ class PasswordManager:
                              foreground="#000000",
                              font=("Segoe UI", 10, "bold"))
 
-        # Configure modern styling
-        self.style.configure("Custom.TButton",
-                            padding=10,
-                            borderwidth=0,
-                            relief="flat",
-                            borderradius=10)
-        
-        self.style.configure("Custom.TEntry",
-                            padding=5,
-                            relief="flat",
-                            borderwidth=0,
-                            fieldbackground="#f0f0f0")
-        
-        self.style.configure("Custom.TFrame",
-                            borderwidth=1,
-                            relief="solid",
-                            borderradius=15)
-        
-        self.style.configure("Custom.Treeview",
-                            rowheight=40,
-                            padding=5,
-                            borderwidth=0,
-                            relief="flat",
-                            borderradius=10)
-        
-        self.style.configure("Custom.Treeview.Heading",
-                            padding=10,
-                            font=("Segoe UI", 10, "bold"))
-        
-        # Apply rounded corners to all buttons
-        self.style.configure("TButton", 
-                            borderradius=10,
-                            padding=10)
-        
-        # Make entry fields look modern
-        self.style.configure("TEntry",
-                            padding=8,
-                            relief="flat",
-                            borderwidth=0)
-        
-        # Add shadow effect to frames
-        self.style.configure("Card.TFrame",
-                            borderwidth=0,
-                            relief="solid",
-                            padding=15,
-                            borderradius=15)
-
         if os.path.exists("secret.key"):
             self.load_key()
         else:
@@ -160,13 +92,6 @@ class PasswordManager:
         self.auto_lock_id = None
         self.bind_auto_lock_events()
         self.reset_auto_lock_timer()
-
-    def set_window_icon(self, window):
-        """Sets the favicon for any window or popup"""
-        try:
-            window.iconbitmap("favicon.ico")
-        except Exception as e:
-            print(f"Could not set window icon: {e}")
 
     # ---------------- Helper to Center Popups -------------------
     def center_popup(self, popup):
@@ -468,12 +393,12 @@ class PasswordManager:
 
     # ---------------- Widget Creation -------------------
     def create_widgets(self):
-        top_frame = ttk.Frame(self.root, padding=10, style="Card.TFrame")
-        top_frame.pack(fill=tk.X, padx=10, pady=5)
+        top_frame = ttk.Frame(self.root, padding=10)
+        top_frame.pack(fill=tk.X)
         
         # Container for search entry, filter toggle, clear search, and "Generate a Pass" button.
-        search_container = ttk.Frame(top_frame, style="Card.TFrame")
-        search_container.pack(fill=tk.X, padx=5, pady=5)
+        search_container = ttk.Frame(top_frame)
+        search_container.pack(fill=tk.X)
         ttk.Label(search_container, text="Search:").pack(side=tk.LEFT)
         self.search_var = tk.StringVar()
         search_entry = ttk.Entry(search_container, textvariable=self.search_var, width=30)
@@ -514,7 +439,7 @@ class PasswordManager:
         tree_frame.pack(expand=True, fill=tk.BOTH)
         # Treeview with a "S.No." column.
         self.tree = ttk.Treeview(tree_frame, columns=("S.No.", "Name", "URL", "Username", "Password", "Note"),
-                                 show="headings", style="Custom.Treeview", bootstyle="info-rounded")
+                                 show="headings", bootstyle="info", selectmode='extended')
         for col in ["S.No.", "Name", "URL", "Username", "Password", "Note"]:
             self.tree.heading(col, text=col)
             if col == "S.No.":
@@ -547,21 +472,14 @@ class PasswordManager:
             ("Edit Entry", self.edit_entry),
             ("Delete Entry", self.delete_entry),
             ("View Password", self.view_password),
-            ("Copy Password", self.copy_to_clipboard),
-            ("Copy Username", self.copy_username)  # Added Copy Username button
+            ("Copy Password", self.copy_to_clipboard)
         ]
         for text, command in btn_specs:
-            ttk.Button(btn_frame, 
-                      text=text, 
-                      command=command, 
-                      style="Custom.TButton",
-                      bootstyle=(PRIMARY, "rounded")).pack(side=tk.LEFT, padx=5, pady=5)
+            ttk.Button(btn_frame, text=text, command=command, bootstyle=PRIMARY).pack(side=tk.LEFT, padx=5, pady=5)
         
         # Details section below the button frame.
-        self.details_frame = ttk.Frame(self.root, 
-                                     padding=15,
-                                     style="Card.TFrame")
-        self.details_frame.pack(fill=tk.X, padx=15, pady=10)
+        self.details_frame = ttk.Frame(self.root, padding=10, relief="groove")
+        self.details_frame.pack(fill=tk.X, padx=10, pady=5)
         self.tree.bind("<<TreeviewSelect>>", self.update_details)
 
     def update_clear_search_button(self, *args):
@@ -775,8 +693,8 @@ class PasswordManager:
 
     # --------------- Password Generator Toplevel ---------------
     def open_password_generator(self, apply_target=None):
-        pg_window = ttk.Toplevel(self.root)
-        self.set_window_icon(pg_window)
+        pg_window = tk.Toplevel(self.root)
+        pg_window.title("Password Generator")
         pg_window.geometry("700x700")
         
         notebook = ttk.Notebook(pg_window)
@@ -1086,18 +1004,6 @@ class PasswordManager:
                 messagebox.showinfo("Copied", "Password copied to clipboard!")
             except Exception:
                 messagebox.showerror("Error", "Failed to decrypt password!")
-        else:
-            messagebox.showerror("Error", "No entry selected!")
-
-    def copy_username(self):
-        selected = self.tree.selection()
-        if selected:
-            index = int(selected[0])
-            username = self.entries[index]['username']
-            self.root.clipboard_clear()
-            self.root.clipboard_append(username)
-            self.root.update()
-            messagebox.showinfo("Copied", "Username copied to clipboard!")
         else:
             messagebox.showerror("Error", "No entry selected!")
 
