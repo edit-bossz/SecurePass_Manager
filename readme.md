@@ -13,7 +13,7 @@ This project was originally developed in Python. It has been converted to an **.
 ## How to Use??
 
 ### A. Install the application directly (easier)
-1. Download the latest release from here.
+1. Download the latest release from [HERE](https://github.com/edit-bossz/SecurePass_Manager/releases/latest).
 
 ### OR B. Use the Python code
 1. Ensure you have Python installed.
