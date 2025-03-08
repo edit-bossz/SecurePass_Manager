@@ -12,10 +12,10 @@ This project was originally developed in Python. It has been converted to an **.
 
 ## How to Use??
 
-### Install the application directly (easier)
+### A. Install the application directly (easier)
 1. Download the latest release from here.
 
-### OR use the python code
+### OR B. Use the Python code
 1. Ensure you have Python installed.
 2. Install dependencies using:
 
