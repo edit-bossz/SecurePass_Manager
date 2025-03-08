@@ -39,5 +39,6 @@ This project was originally developed in Python. It has been converted to an **.
    py main.pyw
    ```
 
-## A Sneak Peek!
+## A Sneak Peek!!
+
 ![A sneak peek](https://github.com/user-attachments/assets/f8158f7e-b78d-4aae-849e-73df25e042eb)
