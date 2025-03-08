@@ -1009,17 +1009,61 @@ class PasswordManager:
 
     def import_csv(self):
         file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")], parent=self.root)
-        if file_path:
-            with open(file_path, newline='') as csvfile:
+        if not file_path:
+            return
+        
+        try:
+            with open(file_path, newline='', encoding='utf-8') as csvfile:
                 reader = csv.DictReader(csvfile)
+                
+                # Get header names and convert to lowercase for case-insensitive matching
+                headers = [h.lower() for h in reader.fieldnames] if reader.fieldnames else []
+                required_fields = ['name', 'password']
+                
+                # Check if required fields exist in CSV
+                missing_fields = [field for field in required_fields if field not in headers]
+                if missing_fields:
+                    messagebox.showerror("Error", f"Required fields missing in CSV: {', '.join(missing_fields)}")
+                    return
+                
+                # Track statistics
+                imported = 0
+                skipped = 0
+                
                 for row in reader:
-                    entry = {k: row.get(k, '') for k in ["name", "url", "username", "note"]}
-                    plaintext_password = row.get("password", "")
-                    entry["password"] = self.encrypt(plaintext_password)
-                    self.entries.append(entry)
-            self.save_data()
-            self.load_data()
-            self.status.config(text="CSV imported successfully!")
+                    try:
+                        # Create entry with default empty strings for optional fields
+                        entry = {
+                            'name': row.get('name', '').strip() or f"Entry_{imported + 1}",  # Default name if empty
+                            'url': row.get('url', '').strip(),
+                            'username': row.get('username', '').strip(),
+                            'note': row.get('note', '').strip(),
+                        }
+                        
+                        # Get password and encrypt it, use empty string if no password
+                        plaintext_password = row.get('password', '').strip()
+                        entry['password'] = self.encrypt(plaintext_password)
+                        imported += 1
+                        self.entries.append(entry)
+                            
+                    except Exception as e:
+                        print(f"Error processing row: {e}")
+                        skipped += 1
+                        continue
+                
+                if imported > 0:
+                    self.save_data()
+                    self.load_data()
+                    messagebox.showinfo("Import Complete", 
+                        f"Successfully imported {imported} entries.\n"
+                        f"Skipped {skipped} entries.")
+                else:
+                    messagebox.showwarning("Import Failed", 
+                        "No entries were imported.\n"
+                        "Please check if your CSV file is properly formatted.")
+                    
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to import CSV file:\n{str(e)}")
 
     def export_csv(self):
         print("Exporting", len(self.entries), "entries")
