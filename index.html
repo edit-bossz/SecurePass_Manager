@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SecurePass Manager</title>
+  <style>
+    :root {
+      --primary-color: #2A5EE8;
+      --background-color: #ffffff;
+      --text-color: #1a1a1a;
+      --nav-background: #ffffff;
+      --card-background: #f8f9fa;
+      --border-color: #e9ecef;
+      --hover-transition: all 0.3s ease;
+    }
+    [data-theme="dark"] {
+      --primary-color: #4A7CFF;
+      --background-color: #1a1a1a;
+      --text-color: #ffffff;
+      --nav-background: #2d2d2d;
+      --card-background: #2d2d2d;
+      --border-color: #404040;
+    }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      transition: var(--hover-transition);
+    }
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: var(--nav-background);
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    /* Theme toggle */
+    .theme-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.5s ease;
+    }
+    .theme-toggle:hover {
+      transform: rotate(20deg);
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    .theme-toggle svg {
+      width: 24px;
+      height: 24px;
+    }
+    /* Force moon icon to look white in dark mode */
+    [data-theme="dark"] #moon-icon {
+      stroke: white;
+    }
+    /* Hero Section */
+    .hero {
+      padding: 8rem 2rem 4rem;
+      background: linear-gradient(135deg, var(--primary-color), #6c5ce7);
+      color: white;
+      text-align: center;
+      margin-top: 70px;
+    }
+    /* Softer hero gradient for dark mode */
+    [data-theme="dark"] .hero {
+      background: linear-gradient(135deg, #2c3e50, #4a5568);
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .cta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .button {
+      display: inline-block;
+      padding: 0.8rem 1.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin: 0.5rem;
+      border: 2px solid transparent;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      cursor: pointer;
+    }
+    .button-primary {
+      background-color: white;
+      color: var(--primary-color);
+    }
+    .button-primary:hover {
+      background-color: #f0f0f0;
+    }
+    .button-secondary {
+      background-color: transparent;
+      border-color: white;
+      color: white;
+    }
+    .button-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    /* Releases Section */
+    .releases {
+      padding: 4rem 1rem;
+    }
+    .releases-grid {
+      display: grid;
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    @media (min-width: 768px) {
+      .releases-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .release-card {
+      background-color: var(--card-background);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: transform 0.3s ease;
+    }
+    .release-card:hover {
+      transform: translateY(-5px);
+    }
+    .release-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .release-card p {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    .release-card .assets {
+      margin-top: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .release-card .assets a {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 1rem;
+      text-decoration: none;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .release-card .assets a:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <h1 class="logo">SecurePass Manager</h1>
+    <button class="theme-toggle" id="theme-toggle">
+      <svg id="sun-icon" viewBox="0 0 24 24">
+        <path d="M12 3v1m0 16v1m8.66-10h-1M4.34 12h-1m15.364 4.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+      </svg>
+      <svg id="moon-icon" viewBox="0 0 24 24" style="display: none;">
+        <path d="M20.354 15.354A9 9 0 118.646 3.646a7 7 0 1011.708 11.708z"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>SecurePass Manager</h1>
+    <p>Enterprise-grade password management solution</p>
+    <div class="cta-buttons">
+      <a href="#" class="button button-primary" id="exe-download">Download Latest Release</a>
+      <a href="#" class="button button-secondary" id="python-download">Get Python Source</a>
+    </div>
+  </section>
+
+  <!-- Releases Section -->
+  <section class="releases">
+    <div class="releases-grid" id="releases-container"></div>
+  </section>
+
+  <script>
+    // Theme Toggle with persistence
+    const themeToggle = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      sunIcon.style.display = newTheme === 'light' ? 'block' : 'none';
+      moonIcon.style.display = newTheme === 'dark' ? 'block' : 'none';
+      localStorage.setItem('theme', newTheme);
+    }
+    themeToggle.addEventListener('click', toggleTheme);
+    // Initialize theme based on saved preference or system settings
+    const savedTheme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    sunIcon.style.display = savedTheme === 'light' ? 'block' : 'none';
+    moonIcon.style.display = savedTheme === 'dark' ? 'block' : 'none';
+
+    // Fetch and update the Latest Release (.exe) button
+    async function fetchLatestRelease() {
+      try {
+        const response = await fetch('https://api.github.com/repos/edit-bossz/SecurePass_Manager/releases/latest');
+        const release = await response.json();
+        const exeAsset = release.assets.find(asset => asset.name.endsWith('.exe'));
+        const exeBtn = document.getElementById('exe-download');
+        if (exeAsset) {
+          exeBtn.href = exeAsset.browser_download_url;
+          exeBtn.textContent = exeAsset.name;
+          exeBtn.download = "";
+        } else {
+          exeBtn.textContent = "Latest Release Unavailable";
+          exeBtn.style.pointerEvents = 'none';
+          exeBtn.style.opacity = '0.6';
+        }
+      } catch (error) {
+        console.error("Error fetching latest release:", error);
+        const exeBtn = document.getElementById('exe-download');
+        exeBtn.textContent = "Error fetching release";
+      }
+    }
+    fetchLatestRelease();
+
+    // Force download for Python file
+    document.getElementById('python-download').addEventListener('click', async function(e) {
+      e.preventDefault();
+      const url = "https://raw.githubusercontent.com/edit-bossz/SecurePass_Manager/main/main.pyw";
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = "main.pyw";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+      } catch (err) {
+        console.error('Download failed', err);
+      }
+    });
+
+    // Fetch and display previous releases
+    async function fetchReleases() {
+      try {
+        const response = await fetch('https://api.github.com/repos/edit-bossz/SecurePass_Manager/releases');
+        const releases = await response.json();
+        const container = document.getElementById('releases-container');
+        container.innerHTML = releases.map(release => `
+          <div class="release-card">
+            <h3>${release.tag_name}</h3>
+            <p>${new Date(release.published_at).toLocaleDateString()}</p>
+            <div class="assets">
+              ${release.assets.map(asset => `
+                <a href="${asset.browser_download_url}" download>${asset.name}</a>
+              `).join('')}
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error fetching releases:', error);
+      }
+    }
+    fetchReleases();
+  </script>
+</body>
+</html>
