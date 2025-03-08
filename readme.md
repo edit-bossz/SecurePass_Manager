@@ -1,5 +1,7 @@
 # SecurePass Manager
 
+**[OFFICIAL WEBSITE!!!](https://edit-bossz.github.io/SecurePass_Manager/)**
+
 This is a Python-based GUI application built for simple password management with no bs.
 This project was originally developed in Python. It has been converted to an **.exe** by the very helpful tool [PyInstaller](https://pyinstaller.org/en/stable/).
 
@@ -13,7 +15,7 @@ This project was originally developed in Python. It has been converted to an **.
 ## How to Use??
 
 ### A. Install the application directly (easier)
-1. Download the latest release from [HERE](https://github.com/edit-bossz/SecurePass_Manager/releases/latest).
+1. Download the latest release from [HERE](https://github.com/edit-bossz/SecurePass_Manager/releases/download/latest/main.exe).
 
 ### OR B. Use the Python code
 1. Ensure you have Python installed.
